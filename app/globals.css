@@ -1,0 +1,478 @@
+:root {
+  --latar: #fbfaf8;
+  --kartu: #ffffff;
+  --tepi: #e6e2db;
+  --tepi-kuat: #d3cec4;
+  --teks: #1f2321;
+  --teks-lembut: #5f6663;
+  --aksen: #1f6f5c;
+  --aksen-lembut: #eaf3f0;
+  --sehat: #1f6f5c;
+  --sehat-latar: #e6f2ee;
+  --hati-hati: #8a6212;
+  --hati-hati-latar: #fbf1da;
+  --risiko: #9c3328;
+  --risiko-latar: #fbe9e6;
+  --netral: #5f6663;
+  --netral-latar: #eeeeec;
+  --radius: 12px;
+  --bayang: 0 1px 2px rgba(31, 35, 33, 0.04), 0 4px 16px rgba(31, 35, 33, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --latar: #141715;
+    --kartu: #1c211e;
+    --tepi: #2c332f;
+    --tepi-kuat: #3b443f;
+    --teks: #eaeeeb;
+    --teks-lembut: #a3ada8;
+    --aksen: #6fc4ab;
+    --aksen-lembut: #1d2f2a;
+    --sehat: #6fc4ab;
+    --sehat-latar: #1a2e28;
+    --hati-hati: #e0b45f;
+    --hati-hati-latar: #322914;
+    --risiko: #ec8878;
+    --risiko-latar: #331e1a;
+    --netral: #a3ada8;
+    --netral-latar: #262b28;
+    --bayang: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--latar);
+  color: var(--teks);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--aksen);
+}
+
+.bungkus {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+.kepala-situs {
+  padding: 28px 0 24px;
+  border-bottom: 1px solid var(--tepi);
+  margin-bottom: 32px;
+}
+
+.kepala-situs .merek {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.kepala-situs h1 {
+  font-size: 22px;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.kepala-situs p {
+  margin: 8px 0 0;
+  color: var(--teks-lembut);
+  font-size: 15px;
+  max-width: 58ch;
+}
+
+h2 {
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+
+h3 {
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+
+.kartu {
+  background: var(--kartu);
+  border: 1px solid var(--tepi);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--bayang);
+}
+
+.bagian {
+  margin-bottom: 28px;
+}
+
+.lembut {
+  color: var(--teks-lembut);
+  font-size: 14px;
+}
+
+/* ---------- unggah ---------- */
+
+.zona-unggah {
+  border: 1.5px dashed var(--tepi-kuat);
+  border-radius: var(--radius);
+  background: var(--kartu);
+  padding: 40px 24px;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.zona-unggah.aktif {
+  border-color: var(--aksen);
+  background: var(--aksen-lembut);
+}
+
+.zona-unggah p {
+  margin: 0 0 4px;
+}
+
+.tombol {
+  appearance: none;
+  border: 1px solid transparent;
+  background: var(--aksen);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tombol:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.tombol:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.tombol.sekunder {
+  background: transparent;
+  color: var(--teks);
+  border-color: var(--tepi-kuat);
+}
+
+.nama-berkas {
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.status-proses {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  color: var(--teks-lembut);
+  font-size: 15px;
+}
+
+.putar {
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--tepi-kuat);
+  border-top-color: var(--aksen);
+  border-radius: 50%;
+  animation: putar 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes putar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.galat {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--risiko-latar);
+  color: var(--risiko);
+  font-size: 15px;
+  text-align: left;
+}
+
+/* ---------- riwayat ---------- */
+
+.daftar-riwayat {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.daftar-riwayat a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--kartu);
+  border: 1px solid var(--tepi);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.daftar-riwayat a:hover {
+  border-color: var(--tepi-kuat);
+}
+
+.baris-riwayat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.baris-riwayat strong {
+  font-size: 15px;
+}
+
+/* ---------- lencana status ---------- */
+
+.lencana {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.lencana.sehat {
+  background: var(--sehat-latar);
+  color: var(--sehat);
+}
+.lencana.hati-hati {
+  background: var(--hati-hati-latar);
+  color: var(--hati-hati);
+}
+.lencana.risiko {
+  background: var(--risiko-latar);
+  color: var(--risiko);
+}
+.lencana.netral {
+  background: var(--netral-latar);
+  color: var(--netral);
+}
+
+/* ---------- hasil ---------- */
+
+.kepala-hasil {
+  margin-bottom: 26px;
+}
+
+.kepala-hasil h2 {
+  margin: 10px 0 4px;
+  font-size: 24px;
+}
+
+.tabel-pos {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.tabel-pos th,
+.tabel-pos td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--tepi);
+  vertical-align: top;
+}
+
+.tabel-pos th {
+  font-weight: 600;
+  width: 34%;
+}
+
+/* Di dalam sel tabel yang sempit, penjelasan istilah butuh lebar minimum
+   supaya tidak jadi kolom teks satu-dua kata. */
+.tabel-pos th .gelembung {
+  min-width: 230px;
+}
+
+.tabel-pos tr:last-child th,
+.tabel-pos tr:last-child td {
+  border-bottom: none;
+}
+
+.tabel-pos td .lembut {
+  display: block;
+  margin-top: 2px;
+}
+
+.pos-hilang {
+  color: var(--teks-lembut);
+  font-style: italic;
+}
+
+.pembungkus-tabel {
+  overflow-x: auto;
+}
+
+.daftar-poin {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.daftar-poin li {
+  padding-left: 16px;
+  border-left: 3px solid var(--tepi-kuat);
+}
+
+.daftar-poin.waspada li {
+  border-left-color: var(--hati-hati);
+}
+
+.daftar-poin p {
+  margin: 0;
+}
+
+/* ---------- istilah ---------- */
+
+.istilah {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: help;
+  border-bottom: 1.5px dotted var(--aksen);
+  text-decoration: none;
+}
+
+.istilah:hover,
+.istilah[aria-expanded="true"] {
+  background: var(--aksen-lembut);
+}
+
+.gelembung {
+  display: block;
+  margin: 8px 0;
+  padding: 12px 14px;
+  background: var(--aksen-lembut);
+  border-left: 3px solid var(--aksen);
+  border-radius: 0 8px 8px 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.gelembung strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.kamus-penuh {
+  margin-top: 8px;
+}
+
+.kamus-penuh summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.kamus-penuh dl {
+  margin: 14px 0 0;
+}
+
+.kamus-penuh dt {
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.kamus-penuh dd {
+  margin: 2px 0 0;
+  color: var(--teks-lembut);
+  font-size: 15px;
+}
+
+/* ---------- catatan ---------- */
+
+.catatan textarea {
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--teks);
+  background: var(--latar);
+  border: 1px solid var(--tepi-kuat);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.catatan textarea:focus {
+  outline: 2px solid var(--aksen);
+  outline-offset: 1px;
+}
+
+.baris-catatan {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  min-height: 22px;
+}
+
+/* ---------- catatan kaki ---------- */
+
+.penafian {
+  margin-top: 32px;
+  padding: 16px 18px;
+  border: 1px solid var(--tepi);
+  border-radius: var(--radius);
+  background: var(--netral-latar);
+  color: var(--teks-lembut);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.tautan-balik {
+  display: inline-block;
+  font-size: 15px;
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+
+.tautan-balik:hover {
+  text-decoration: underline;
+}
+
+.kosong {
+  color: var(--teks-lembut);
+  font-size: 15px;
+  padding: 18px;
+  border: 1px dashed var(--tepi-kuat);
+  border-radius: var(--radius);
+  text-align: center;
+}
