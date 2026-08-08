@@ -237,5 +237,6 @@ export async function terjemahkanLaporan(
 
   hasil.alasan = hasil.alasan.slice(0, 5);
   hasil.titikWaspada = hasil.titikWaspada.slice(0, 5);
+  hasil.mesin = "ai";
   return hasil;
 }

@@ -415,6 +415,35 @@ h3 {
   font-size: 15px;
 }
 
+/* ---------- cara menilai ---------- */
+
+.cara-menilai {
+  margin-top: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--tepi);
+  border-radius: var(--radius);
+  background: var(--netral-latar);
+  font-size: 14.5px;
+}
+
+.cara-menilai summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cara-menilai p {
+  margin: 12px 0 0;
+}
+
+.cara-menilai ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+
+.cara-menilai li {
+  margin-bottom: 6px;
+}
+
 /* ---------- catatan ---------- */
 
 .catatan textarea {

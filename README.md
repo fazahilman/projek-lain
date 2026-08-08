@@ -44,21 +44,40 @@ pemeriksaan pola di sisi server (`lib/penjaga.ts`). Kalau hasil model masih
 memuat kalimat bergaya saran, model diminta menulis ulang sekali; kalau masih
 lolos juga, kalimatnya dibuang sebelum ditampilkan.
 
+## Dua mesin baca
+
+Aplikasi ini punya dua cara membaca laporan. Yang dipakai ditentukan otomatis
+oleh ada-tidaknya `ANTHROPIC_API_KEY`, dan halaman hasil selalu menyebutkan yang
+mana yang dipakai.
+
+| | Tanpa API (default) | Dengan Anthropic API |
+|---|---|---|
+| Kapan aktif | `ANTHROPIC_API_KEY` kosong | `ANTHROPIC_API_KEY` terisi |
+| Cara ambil angka | Cocokkan nama baris laporan keuangan (`lib/pembacaAngka.ts`) | Model membaca teksnya |
+| Kalau nama barisnya tidak baku | Ditandai "tidak ditemukan", tidak menebak | Biasanya tetap ketemu |
+| Status kesehatan | Ambang tetap di `ATURAN_STATUS`, ditampilkan terbuka ke pengguna | Disimpulkan dari angka |
+| Alasan & titik waspada | Kalimat berpola, angkanya dari laporan | Disusun ulang tiap laporan |
+| Biaya | Rp 0 | Sekitar Rp 5.000 per laporan |
+
+Mesin tanpa API sengaja memilih diam daripada menebak: pos yang nama barisnya
+tidak dikenali ditandai "tidak ditemukan" dan diangkat jadi titik waspada
+pertama, supaya pengguna tahu kesimpulannya disusun tanpa angka itu.
+
 ## Cara menjalankan lokal
 
 ```bash
 npm install
-cp .env.example .env.local   # lalu isi ANTHROPIC_API_KEY
-npm run dev
+npm run dev          # jalan tanpa API, memakai mesin aturan
 ```
 
-Buka http://localhost:3000.
+Buka http://localhost:3000. Untuk memakai mesin AI, salin `.env.example` jadi
+`.env.local` lalu isi `ANTHROPIC_API_KEY`.
 
 ## Konfigurasi
 
 | Variabel | Wajib | Keterangan |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | ya | Kunci Anthropic API untuk membaca dan menerjemahkan isi laporan. |
+| `ANTHROPIC_API_KEY` | tidak | Kalau diisi, penjelasan disusun model Claude. Kalau kosong, dipakai mesin aturan tanpa AI. |
 | `ANTHROPIC_MODEL` | tidak | Default `claude-opus-5`. |
 | `KV_REST_API_URL` / `KV_REST_API_TOKEN` | untuk produksi | Penyimpanan riwayat dan catatan. Terisi otomatis kalau menghubungkan Vercel KV / Upstash Redis lewat Marketplace. `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` juga diterima. |
 
@@ -69,10 +88,10 @@ untuk coba-coba lokal, tidak layak untuk produksi.
 ## Deploy ke Vercel
 
 1. Impor repositori ini di Vercel (framework terdeteksi otomatis: Next.js).
-2. Tambahkan `ANTHROPIC_API_KEY` di Environment Variables.
-3. Di tab **Storage**, hubungkan sebuah Redis (Upstash) — Vercel akan mengisi
+2. Di tab **Storage**, hubungkan sebuah Redis (Upstash) — Vercel akan mengisi
    `KV_REST_API_URL` dan `KV_REST_API_TOKEN` sendiri.
-4. Deploy.
+3. Opsional: tambahkan `ANTHROPIC_API_KEY` kalau mau penjelasan disusun AI.
+4. Deploy. (Env var baru baru berlaku setelah deploy ulang.)
 
 Rute `/api/analisis` diberi `maxDuration = 300` karena membaca laporan panjang
 bisa memakan waktu lebih dari satu menit.
@@ -92,6 +111,12 @@ halaman, sementara pos-pos kunci cuma ada di beberapa halaman laporan utama.
 keuangan dan kepadatan angkanya, lalu mengirim halaman paling relevan sampai
 mentok anggaran karakter — tetap dalam urutan aslinya.
 
+**Mesin aturan memilih baris, bukan menebak angka.** `lib/pembacaAngka.ts`
+mencocokkan label baris (mis. `JUMLAH ASET`, tapi bukan `JUMLAH ASET LANCAR`),
+lalu mengambil angka pertama sesudah label itu — kolom periode terkini. Token
+angka wajib berformat ribuan bertitik atau minimal empat digit, supaya nomor
+referensi catatan seperti `2c,5` tidak ikut terbaca sebagai nilai.
+
 **Keluaran model berbentuk terstruktur.** Panggilan ke Anthropic API memakai
 structured outputs (`output_config.format`) dengan skema JSON, jadi bentuk
 hasilnya dijamin konsisten dan tidak perlu diurai dari teks bebas.
@@ -109,6 +134,8 @@ components/
   TeksBerkamus.tsx               sorot istilah, tampilkan penjelasan di tempat
   CatatanPribadi.tsx             catatan dengan simpan otomatis
 lib/
+  pembacaAngka.ts                ambil pos kunci dari teks, tanpa AI
+  analisisAturan.ts              status + alasan + titik waspada dari ambang tetap
   penerjemah.ts                  panggilan Anthropic API + skema hasil
   penjaga.ts                     larangan kalimat bergaya saran investasi
   seleksiHalaman.ts              pemilihan halaman relevan

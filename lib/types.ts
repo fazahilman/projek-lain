@@ -40,7 +40,11 @@ export type Poin = {
   penjelasan: string;
 };
 
+export type MesinBaca = "aturan" | "ai";
+
 export type HasilTerjemahan = {
+  /** Bagaimana hasil ini disusun: aturan baku tanpa AI, atau model Claude. */
+  mesin: MesinBaca;
   namaPerusahaan: string;
   periodeLaporan: string;
   satuanAngka: string;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import CaraMenilai from "@/components/CaraMenilai";
 import CatatanPribadi from "@/components/CatatanPribadi";
 import Lencana from "@/components/Lencana";
 import TeksBerkamus from "@/components/TeksBerkamus";
@@ -52,6 +53,11 @@ export default async function HalamanLaporan({
           {laporan.namaFile} ({laporan.jumlahHalaman} halaman) · dibuka{" "}
           {tanggalIndonesia(laporan.dibuatPada)}
         </p>
+        <p className="lembut" style={{ margin: "6px 0 0" }}>
+          {hasil.mesin === "aturan"
+            ? "Dibaca dengan aturan baku, tanpa AI."
+            : "Dibaca dengan bantuan model Claude."}
+        </p>
       </header>
 
       {/* 1. Status kesehatan */}
@@ -62,6 +68,7 @@ export default async function HalamanLaporan({
             <TeksBerkamus>{hasil.status.ringkasan}</TeksBerkamus>
           </p>
         </div>
+        {hasil.mesin === "aturan" && <CaraMenilai />}
       </section>
 
       {/* Angka yang dibaca dari laporan */}

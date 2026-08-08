@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { analisisTanpaAI } from "@/lib/analisisAturan";
 import { KesalahanPenerjemah, terjemahkanLaporan } from "@/lib/penerjemah";
 import { pilihHalaman, rakitDokumen } from "@/lib/seleksiHalaman";
 import { simpanLaporan } from "@/lib/store";
@@ -50,11 +51,16 @@ export async function POST(request: NextRequest) {
   }
 
   const seleksi = pilihHalaman(halaman);
-  const dokumen = rakitDokumen(seleksi);
+
+  // Tanpa ANTHROPIC_API_KEY, aplikasi tetap jalan memakai mesin baca berbasis
+  // aturan. Hasilnya lebih kaku, dan halaman hasil menyebutkan itu apa adanya.
+  const pakaiAI = Boolean(process.env.ANTHROPIC_API_KEY);
 
   let hasil;
   try {
-    hasil = await terjemahkanLaporan(dokumen, namaFile);
+    hasil = pakaiAI
+      ? await terjemahkanLaporan(rakitDokumen(seleksi), namaFile)
+      : analisisTanpaAI(seleksi.halaman);
   } catch (galat) {
     if (galat instanceof KesalahanPenerjemah) {
       return NextResponse.json({ pesan: galat.message }, { status: 502 });
