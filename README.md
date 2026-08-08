@@ -105,6 +105,15 @@ PDF-nya sendiri jadi tidak perlu meninggalkan perangkat pengguna. Konsekuensinya
 PDF hasil pindaian yang isinya gambar tidak bisa diproses — pengguna diberi tahu
 dengan jelas kalau ini terjadi.
 
+Yang dipakai adalah build **legacy** `pdfjs-dist`, bukan build biasanya. Isinya
+sama, bedanya sudah disertai polyfill core-js — di pustaka utamanya maupun di
+worker-nya. Build biasa memanggil `Promise.withResolvers`, yang baru ada sejak
+Safari/iOS 17.4, jadi di iPhone yang sistemnya sedikit lebih lama semua PDF akan
+gagal dibuka. Sebabnya juga dibedakan sekarang (`lib/bacaPdf.ts`): terkunci kata
+sandi, berkas cacat, kehabisan memori, atau peramban terlalu lama masing-masing
+punya pesan sendiri, supaya pengguna tidak disuruh mengganti berkas yang
+sebenarnya tidak bermasalah.
+
 **Halaman yang dikirim ke model diseleksi.** Laporan tahunan bisa ratusan
 halaman, sementara pos-pos kunci cuma ada di beberapa halaman laporan utama.
 `lib/seleksiHalaman.ts` memberi skor tiap halaman berdasarkan kata kunci laporan

@@ -2,7 +2,20 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { bacaHalamanPdf } from "@/lib/bacaPdf";
+import { bacaHalamanPdf, GagalBacaPdf, type SebabGagalPdf } from "@/lib/bacaPdf";
+
+const PESAN_GAGAL: Record<SebabGagalPdf, string> = {
+  terkunci:
+    "PDF ini terkunci kata sandi, jadi isinya tidak bisa dibaca. Coba unggah versi yang tidak terkunci.",
+  rusak:
+    "Berkas ini tidak terbaca sebagai PDF yang utuh. Kemungkinan unduhannya belum selesai atau berkasnya rusak — coba unduh ulang dari sumbernya.",
+  "kehabisan-memori":
+    "Perangkat kehabisan memori waktu membuka PDF sebesar ini. Di ponsel, coba tutup tab lain dulu, atau buka halaman ini dari komputer.",
+  peramban:
+    "Peramban di perangkat ini terlalu lama untuk membuka PDF. Coba perbarui sistemnya ke versi terbaru, atau buka halaman ini dari peramban lain.",
+  lainnya:
+    "PDF-nya gagal dibuka dan sebabnya tidak terbaca. Coba unggah ulang, atau pakai berkas versi lain.",
+};
 
 type Tahap =
   | { jenis: "diam" }
@@ -48,9 +61,8 @@ export default function FormUnggah() {
     } catch (e) {
       console.error(e);
       setTahap({ jenis: "diam" });
-      setGalat(
-        "PDF-nya tidak bisa dibuka. Kalau berkasnya terkunci dengan kata sandi atau rusak, coba unggah versi lain.",
-      );
+      const sebab = e instanceof GagalBacaPdf ? e.sebab : "lainnya";
+      setGalat(PESAN_GAGAL[sebab]);
       return;
     }
 
