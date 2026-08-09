@@ -12,15 +12,15 @@ import { skorHalaman } from "@/lib/seleksiHalaman";
 
 const PESAN_GAGAL: Record<SebabGagalPdf, string> = {
   terkunci:
-    "PDF ini terkunci kata sandi, jadi isinya tidak bisa dibaca. Coba unggah versi yang tidak terkunci.",
+    "PDF ini dikunci dengan kata sandi, jadi isinya tidak bisa dibaca. Coba unggah versi yang tidak dikunci.",
   rusak:
-    "Berkas ini tidak terbaca sebagai PDF yang utuh. Kemungkinan unduhannya belum selesai atau berkasnya rusak — coba unduh ulang dari sumbernya.",
+    "Berkas ini tidak terbaca sebagai PDF yang utuh — kemungkinan unduhannya belum selesai. Coba unduh ulang laporannya, lalu unggah lagi.",
   "kehabisan-memori":
-    "Perangkat kehabisan memori waktu membuka PDF sebesar ini. Di ponsel, coba tutup tab lain dulu, atau buka halaman ini dari komputer.",
+    "Memori perangkat tidak cukup untuk membuka laporan sebesar ini. Coba tutup tab lain dulu, atau buka halaman ini dari komputer.",
   peramban:
-    "Peramban di perangkat ini terlalu lama untuk membuka PDF. Coba perbarui sistemnya ke versi terbaru, atau buka halaman ini dari peramban lain.",
+    "Peramban di perangkat ini belum mendukung salah satu hal yang dibutuhkan untuk membaca PDF. Coba perbarui sistemnya, atau buka halaman ini dari peramban lain.",
   lainnya:
-    "PDF-nya gagal dibuka dan sebabnya tidak terbaca. Coba unggah ulang, atau pakai berkas versi lain.",
+    "PDF-nya gagal dibuka, dan kami belum bisa memastikan sebabnya. Coba unggah ulang, atau pakai berkas versi lain.",
 };
 
 /**
@@ -188,9 +188,15 @@ export default function FormUnggah() {
         </>
       ) : (
         <>
-          <p>Tarik satu berkas PDF laporan keuangan ke sini</p>
-          <p className="lembut" style={{ marginBottom: 18 }}>
+          {/* Di ponsel tidak ada yang bisa "ditarik", jadi ajakannya berbeda —
+              lihat aturan (hover: none) di globals.css. */}
+          <p className="ajakan-tetikus">Tarik satu berkas PDF laporan keuangan ke sini</p>
+          <p className="ajakan-sentuh">Pilih satu berkas PDF laporan keuangan</p>
+          <p className="lembut ajakan-tetikus" style={{ marginBottom: 18 }}>
             atau pilih dari perangkatmu
+          </p>
+          <p className="lembut ajakan-sentuh" style={{ marginBottom: 18 }}>
+            dari berkas tersimpan, iCloud Drive, atau Google Drive
           </p>
           <button className="tombol" onClick={() => inputRef.current?.click()}>
             Pilih berkas PDF
@@ -247,7 +253,7 @@ export default function FormUnggah() {
           <p style={{ margin: 0 }}>{galat}</p>
           {detail && (
             <details className="detail-galat">
-              <summary>Detail teknis</summary>
+              <summary>Detail teknis (tidak perlu dibaca)</summary>
               <p>
                 Kalau mau melaporkan masalah ini, tangkapan layar bagian ini
                 sudah cukup — isinya sebab sebenarnya dan kemampuan peramban di

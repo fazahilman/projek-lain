@@ -555,10 +555,46 @@ h3 {
 /* ---------- layar sempit (ponsel) ---------- */
 
 @media (max-width: 480px) {
+  /* Kepala situs memakan hampir satu layar penuh sebelum isinya kelihatan.
+     Di ponsel dipadatkan supaya yang dicari pengguna langsung terlihat. */
+  .bungkus {
+    padding: 8px 16px 56px;
+  }
+
+  .kepala-situs {
+    padding: 16px 0 16px;
+    margin-bottom: 22px;
+  }
+
+  .kepala-situs h1 {
+    font-size: 20px;
+  }
+
+  .kepala-situs p {
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .zona-unggah {
+    padding: 28px 16px;
+  }
+
+  .kartu {
+    padding: 18px 16px;
+  }
+
+  .kepala-hasil h2 {
+    font-size: 21px;
+  }
+
   /* Tombol berdampingan bikin labelnya pecah jadi dua baris dan sasaran
      sentuhnya kecil. Di layar sempit ditumpuk saja, selebar penuh. */
   .zona-unggah .tombol {
     width: 100%;
+  }
+
+  .tombol {
+    padding: 13px 20px;
   }
 
   .zona-unggah p:has(> .tombol) {
@@ -603,5 +639,57 @@ h3 {
   /* Gelembung penjelasan istilah tidak lagi terkurung sel sempit. */
   .tabel-pos th .gelembung {
     min-width: 0;
+  }
+}
+
+/* Sasaran sentuh. Pedoman Apple menyarankan sisi terpendek 44px; teks biasa
+   cuma setinggi ~24px, jadi yang bisa dipencet diberi ruang tambahan. Padding
+   tegak pada elemen sebaris memperbesar area sentuh tanpa mengubah tata letak
+   barisnya, jadi paragrafnya tidak ikut merenggang. */
+.istilah {
+  padding: 5px 2px;
+  margin: -5px -2px;
+  border-radius: 4px;
+}
+
+.tautan-balik,
+.kamus-penuh summary,
+.cara-menilai summary,
+.detail-galat summary {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.tautan-balik {
+  margin-bottom: 0;
+}
+
+/* Di ponsel, mengetik di kolom catatan dengan huruf di bawah 16px membuat
+   Safari otomatis memperbesar halaman dan tidak mengembalikannya. */
+textarea,
+input {
+  font-size: 16px;
+}
+
+/* Perangkat sentuh tidak bisa menyeret berkas, jadi ajakan "tarik ke sini"
+   cuma membingungkan di ponsel. (hover: none) menandai perangkat tanpa
+   tetikus — lebih tepat daripada menebak dari lebar layar, karena tablet
+   berlayar lebar pun tetap disentuh. */
+.ajakan-sentuh {
+  display: none;
+}
+
+@media (hover: none) {
+  .ajakan-tetikus {
+    display: none;
+  }
+  .ajakan-sentuh {
+    display: block;
+  }
+  /* Garis putus-putus itu isyarat "jatuhkan berkas di sini" — tidak ada
+     artinya kalau menyeret memang tidak mungkin. */
+  .zona-unggah {
+    border-style: solid;
+    border-width: 1px;
   }
 }

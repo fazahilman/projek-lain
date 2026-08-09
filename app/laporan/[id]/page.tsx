@@ -55,8 +55,8 @@ export default async function HalamanLaporan({
         </p>
         <p className="lembut" style={{ margin: "6px 0 0" }}>
           {hasil.mesin === "aturan"
-            ? "Dibaca dengan aturan baku, tanpa AI."
-            : "Dibaca dengan bantuan model Claude."}
+            ? "Angkanya dibaca otomatis dengan aturan baku — tanpa AI."
+            : "Dibaca dengan bantuan AI (model Claude)."}
         </p>
       </header>
 
