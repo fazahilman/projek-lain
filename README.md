@@ -114,6 +114,17 @@ sandi, berkas cacat, kehabisan memori, atau peramban terlalu lama masing-masing
 punya pesan sendiri, supaya pengguna tidak disuruh mengganti berkas yang
 sebenarnya tidak bermasalah.
 
+**Safari belum bisa `for await (… of stream)`.** Ini penyebab sebenarnya kenapa
+tiap PDF gagal dibaca di iPhone padahal berhasil di komputer. pdfjs mengambil
+teks tiap halaman dengan `for await (const value of readableStream)`; membaca
+ReadableStream dengan cara itu sudah lama standar dan dipakai Chrome maupun
+Firefox, tapi Safari — termasuk iOS 18 — belum memasang
+`ReadableStream.prototype[Symbol.asyncIterator]`. Gejalanya menyesatkan:
+dokumennya terbuka normal, jumlah halamannya terbaca, lalu mati di halaman
+pertama dengan `undefined is not a function`. Ini bukan bagian ECMAScript, jadi
+polyfill core-js di build legacy pun tidak menutupinya — `lib/tambalanSafari.ts`
+memasangnya sendiri sesuai perilaku baku, dan hanya kalau memang belum ada.
+
 **Ada jalan mundur kalau worker gagal.** pdfjs menjalankan pembacaannya di
 *module worker* (`new Worker(url, {type:"module"})`), yang baru didukung Safari
 sejak versi 15 — dan kalau gagal, gagalnya sering diam-diam: worker terbentuk

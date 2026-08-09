@@ -1,5 +1,7 @@
 "use client";
 
+import { pasangTambalanSafari } from "@/lib/tambalanSafari";
+
 /**
  * Ekstraksi teks PDF dijalankan di browser, bukan di server. Dua alasannya:
  * laporan keuangan Tbk sering jauh lebih besar dari batas ukuran body permintaan
@@ -149,6 +151,10 @@ export async function bacaHalamanPdf(
   // core-js — di pustaka utamanya maupun di worker-nya. Build biasa memakai
   // Promise.withResolvers, yang baru ada di Safari/iOS 17.4, jadi di iPhone yang
   // sedikit lebih lama membuka PDF apa pun akan gagal.
+  // Safari tidak bisa `for await (… of stream)`, dan itu persis cara pdfjs
+  // mengambil teks tiap halaman. Harus dipasang sebelum pustakanya dipakai.
+  pasangTambalanSafari();
+
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
 
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(

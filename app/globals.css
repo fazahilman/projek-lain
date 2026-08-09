@@ -185,8 +185,26 @@ h3 {
   align-items: center;
   gap: 10px;
   justify-content: center;
+  flex-wrap: wrap;
   color: var(--teks-lembut);
   font-size: 15px;
+}
+
+/* Bilah kemajuan. Laporan tahunan bisa ratusan halaman, dan di ponsel angka
+   "halaman 340 dari 672" saja tidak memberi rasa seberapa jauh lagi. */
+.bilah {
+  flex-basis: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--tepi);
+  overflow: hidden;
+}
+
+.bilah-isi {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--aksen);
+  transition: width 0.2s ease-out;
 }
 
 .putar {
@@ -532,4 +550,58 @@ h3 {
   border: 1px dashed var(--tepi-kuat);
   border-radius: var(--radius);
   text-align: center;
+}
+
+/* ---------- layar sempit (ponsel) ---------- */
+
+@media (max-width: 480px) {
+  /* Tombol berdampingan bikin labelnya pecah jadi dua baris dan sasaran
+     sentuhnya kecil. Di layar sempit ditumpuk saja, selebar penuh. */
+  .zona-unggah .tombol {
+    width: 100%;
+  }
+
+  .zona-unggah p:has(> .tombol) {
+    flex-direction: column;
+  }
+
+  /* Dua kolom di layar selebar 390px membuat nama pos pecah jadi satu-dua kata
+     per baris. Tiap pos ditumpuk saja: namanya di atas, angkanya di bawah. */
+  .tabel-pos,
+  .tabel-pos tbody,
+  .tabel-pos tr,
+  .tabel-pos th,
+  .tabel-pos td {
+    display: block;
+    width: auto;
+  }
+
+  .tabel-pos tr {
+    border-bottom: 1px solid var(--tepi);
+    padding: 6px 0;
+  }
+
+  .tabel-pos tr:last-child {
+    border-bottom: none;
+  }
+
+  .tabel-pos th,
+  .tabel-pos td {
+    border-bottom: none;
+    padding: 2px 0;
+  }
+
+  .tabel-pos th {
+    color: var(--teks-lembut);
+    font-size: 14px;
+  }
+
+  .tabel-pos td > span:first-child {
+    font-size: 17px;
+  }
+
+  /* Gelembung penjelasan istilah tidak lagi terkurung sel sempit. */
+  .tabel-pos th .gelembung {
+    min-width: 0;
+  }
 }

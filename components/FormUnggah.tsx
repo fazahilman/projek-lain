@@ -8,6 +8,7 @@ import {
   jejakPerangkat,
   type SebabGagalPdf,
 } from "@/lib/bacaPdf";
+import { skorHalaman } from "@/lib/seleksiHalaman";
 
 const PESAN_GAGAL: Record<SebabGagalPdf, string> = {
   terkunci:
@@ -21,6 +22,37 @@ const PESAN_GAGAL: Record<SebabGagalPdf, string> = {
   lainnya:
     "PDF-nya gagal dibuka dan sebabnya tidak terbaca. Coba unggah ulang, atau pakai berkas versi lain.",
 };
+
+/**
+ * Batas ukuran body permintaan di Vercel 4,5 MB. Laporan tahunan ratusan halaman
+ * bisa melewatinya, dan kalau lewat, permintaannya ditolak sebelum sampai ke
+ * kode kita — pengguna cuma melihat "gagal" tanpa sebab.
+ */
+const MAKS_KIRIM = 3_500_000;
+
+/**
+ * Membuang halaman yang paling tidak mungkin memuat angka laporan keuangan,
+ * memakai penilai yang sama dengan yang dipakai server. Halaman yang dibuang
+ * diganti teks kosong, bukan dihapus, supaya nomor halaman tetap cocok dengan
+ * dokumen aslinya — hasil akhirnya menyebut "diambil dari halaman berapa".
+ */
+function rampingkan(halaman: string[]): string[] {
+  const ukuran = (h: string[]) => h.reduce((a, b) => a + b.length, 0);
+  if (ukuran(halaman) <= MAKS_KIRIM) return halaman;
+
+  const urut = halaman
+    .map((teks, i) => ({ i, teks, skor: skorHalaman(teks) }))
+    .sort((a, b) => b.skor - a.skor);
+
+  const disimpan = new Array<string>(halaman.length).fill("");
+  let terpakai = 0;
+  for (const { i, teks } of urut) {
+    if (terpakai + teks.length > MAKS_KIRIM) continue;
+    disimpan[i] = teks;
+    terpakai += teks.length;
+  }
+  return disimpan;
+}
 
 type Tahap =
   | { jenis: "diam" }
@@ -92,7 +124,10 @@ export default function FormUnggah() {
       const res = await fetch("/api/analisis", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ namaFile: berkas.name, halaman }),
+        body: JSON.stringify({
+          namaFile: berkas.name,
+          halaman: rampingkan(halaman),
+        }),
       });
       const data = (await res.json()) as { id?: string; pesan?: string };
       if (!res.ok || !data.id) {
@@ -168,9 +203,32 @@ export default function FormUnggah() {
           <span className="putar" aria-hidden />
           <span>
             {tahap.total > 0
-              ? `Membaca isi PDF… halaman ${tahap.halaman} dari ${tahap.total}`
-              : "Membuka PDF…"}
+              ? `Membaca halaman ${tahap.halaman} dari ${tahap.total}`
+              : "Membuka berkasnya…"}
           </span>
+          {tahap.total > 0 && (
+            <>
+              <div
+                className="bilah"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={tahap.total}
+                aria-valuenow={tahap.halaman}
+                aria-label="Kemajuan membaca PDF"
+              >
+                <div
+                  className="bilah-isi"
+                  style={{ width: `${(tahap.halaman / tahap.total) * 100}%` }}
+                />
+              </div>
+              {tahap.total > 100 && (
+                <span className="lembut">
+                  Laporannya panjang, jadi ini butuh waktu. Biarkan halaman ini
+                  terbuka.
+                </span>
+              )}
+            </>
+          )}
         </div>
       )}
 
