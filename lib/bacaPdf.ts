@@ -117,7 +117,13 @@ async function pakaiThreadUtama(): Promise<void> {
   g.pdfjsWorker = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs");
 }
 
-const BATAS_BUKA_MS = 25_000;
+/**
+ * Longgar dengan sengaja. Laporan tahunan ratusan halaman di ponsel lama memang
+ * bisa lama dibuka, dan batas yang ketat justru berbahaya: percobaan ulang lewat
+ * thread utama membaca ulang seluruh berkas, jadi kalau sebab aslinya memori,
+ * mempercepat mundur malah memperparah keadaan.
+ */
+const BATAS_BUKA_MS = 60_000;
 
 function denganBatasWaktu<T>(janji: Promise<T>, ms: number): Promise<T | "kehabisan-waktu"> {
   return new Promise((resolve, reject) => {
@@ -153,10 +159,15 @@ export async function bacaHalamanPdf(
   const adaWorker = await ujiWorkerModul();
   if (!adaWorker) await pakaiThreadUtama();
 
-  const data = new Uint8Array(await berkas.arrayBuffer());
-
+  // Byte-nya dibaca ulang tiap percobaan, bukan dipakai bersama. pdfjs
+  // memindahkan (transfer) buffer ini ke worker, yang membuat Uint8Array di sini
+  // ikut kosong — percobaan kedua dengan array yang sama akan terlihat seperti
+  // berkas rusak, dan sebab aslinya tertutupi.
   const buka = async () =>
-    await pdfjs.getDocument({ data, useSystemFonts: true }).promise;
+    await pdfjs.getDocument({
+      data: new Uint8Array(await berkas.arrayBuffer()),
+      useSystemFonts: true,
+    }).promise;
 
   let dokumen;
   try {
@@ -193,6 +204,13 @@ export async function bacaHalamanPdf(
       }
       halaman.push(teks.replace(/\n{3,}/g, "\n\n").trim());
       laman.cleanup();
+
+      // Membersihkan tiap halaman saja tidak melepas simpanan font dan gambar
+      // yang menumpuk di tingkat dokumen. Di ponsel, jatah memori satu tab jauh
+      // lebih sempit daripada di komputer, dan laporan tahunan itu panjang —
+      // jadi simpanan itu dikosongkan berkala, bukan cuma di akhir.
+      if (i % 25 === 0) await dokumen.cleanup();
+
       onKemajuan?.(i, dokumen.numPages);
     }
   } catch (e) {
