@@ -418,7 +418,7 @@ function susunPos(baca: HasilPembacaan): Record<KunciPos, Pos> {
         periode: "-",
         ditemukan: false,
         catatan:
-          "Tidak ada baris dengan penamaan baku untuk pos ini di halaman yang terbaca.",
+          "Nama barisnya tidak dikenali, jadi angka ini tidak ikut dipakai. Bisa jadi laporannya memakai istilah yang berbeda.",
       };
       continue;
     }
@@ -427,7 +427,9 @@ function susunPos(baca: HasilPembacaan): Record<KunciPos, Pos> {
       nilaiNumerik: temuan.nilai * baca.pengaliSatuan,
       periode: baca.periodeLaporan ?? "periode tidak terbaca",
       ditemukan: true,
-      catatan: `Diambil dari halaman ${temuan.halaman}, baris "${ringkas(temuan.baris)}".`,
+      // Ditulis dari sudut pandang pembaca, bukan mesin: yang pertama dilihat
+      // adalah ke halaman mana ia harus mengecek, baru barisnya sebagai bukti.
+      catatan: `Ada di halaman ${temuan.halaman} laporanmu — baris "${ringkas(temuan.baris)}".`,
     };
   }
   return keluar;

@@ -11,6 +11,15 @@ import { DISCLAIMER, LABEL_POS, POS_KUNCI } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Jenis dokumen sudah berbunyi seperti kalimat ("laporan keuangan auditan"),
+ * jadi tidak boleh diberi awalan "Laporan" lagi — cukup huruf depannya
+ * dibesarkan supaya layak jadi awal baris.
+ */
+function awalHuruf(teks: string): string {
+  return teks.charAt(0).toUpperCase() + teks.slice(1);
+}
+
 function tanggalIndonesia(iso: string): string {
   return new Date(iso).toLocaleDateString("id-ID", {
     day: "numeric",
@@ -48,12 +57,17 @@ export default async function HalamanLaporan({
       <header className="kepala-hasil">
         <Lencana label={hasil.status.label} />
         <h2>{hasil.namaPerusahaan}</h2>
-        <p className="lembut" style={{ margin: 0 }}>
-          {hasil.jenisDokumen} · {hasil.periodeLaporan} · dari berkas{" "}
-          {laporan.namaFile} ({laporan.jumlahHalaman} halaman) · dibuka{" "}
-          {tanggalIndonesia(laporan.dibuatPada)}
+        {/* Yang paling menentukan arti angkanya — jenis laporan dan periodenya
+            — dipisah ke barisnya sendiri. Asal berkas dan tanggal buka cuma
+            penanda arsip, jadi ditaruh di bawah dan dibuat lebih redup. */}
+        <p style={{ margin: 0 }}>
+          {awalHuruf(hasil.jenisDokumen)} per {hasil.periodeLaporan}
         </p>
-        <p className="lembut" style={{ margin: "6px 0 0" }}>
+        <p className="lembut" style={{ margin: "4px 0 0" }}>
+          Dari berkas {laporan.namaFile} · {laporan.jumlahHalaman} halaman ·
+          dibuka {tanggalIndonesia(laporan.dibuatPada)}
+        </p>
+        <p className="lembut" style={{ margin: "4px 0 0" }}>
           {hasil.mesin === "aturan"
             ? "Angkanya dibaca otomatis dengan aturan baku — tanpa AI."
             : "Dibaca dengan bantuan AI (model Claude)."}
@@ -74,6 +88,9 @@ export default async function HalamanLaporan({
       {/* Angka yang dibaca dari laporan */}
       <section className="bagian">
         <h2>Angka yang dibaca dari laporan</h2>
+        <p className="lembut" style={{ marginTop: -6 }}>
+          Lima angka ini yang jadi dasar semua penjelasan di halaman ini.
+        </p>
         <div className="kartu pembungkus-tabel">
           <table className="tabel-pos">
             <tbody>
