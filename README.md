@@ -114,6 +114,22 @@ sandi, berkas cacat, kehabisan memori, atau peramban terlalu lama masing-masing
 punya pesan sendiri, supaya pengguna tidak disuruh mengganti berkas yang
 sebenarnya tidak bermasalah.
 
+**Ada jalan mundur kalau worker gagal.** pdfjs menjalankan pembacaannya di
+*module worker* (`new Worker(url, {type:"module"})`), yang baru didukung Safari
+sejak versi 15 — dan kalau gagal, gagalnya sering diam-diam: worker terbentuk
+tapi tidak pernah menjawab, jadi pustakanya menunggu selamanya tanpa melempar
+apa pun. Karena itu dukungannya diuji dulu dengan worker kecil sungguhan, dan
+pembukaan dokumen diberi batas waktu. Kalau salah satunya gagal, modul worker
+diimpor langsung ke `globalThis.pdfjsWorker` — pintu resmi pdfjs untuk bekerja
+di thread utama tanpa Worker sama sekali. Lebih lambat dan menahan tampilan,
+tapi tetap membaca. Ketiga kondisi ini ada ujinya (worker normal, worker
+ditolak, worker diam).
+
+Waktu pembacaan tetap gagal, pesan galatnya menyertakan **"Detail teknis"** yang
+bisa dibuka: sebab sebenarnya plus daftar kemampuan peramban di perangkat itu.
+Kegagalan di ponsel orang lain tidak bisa direproduksi dari sini, jadi satu
+tangkapan layar bagian itu yang menggantikan tebak-tebakan.
+
 **Halaman yang dikirim ke model diseleksi.** Laporan tahunan bisa ratusan
 halaman, sementara pos-pos kunci cuma ada di beberapa halaman laporan utama.
 `lib/seleksiHalaman.ts` memberi skor tiap halaman berdasarkan kata kunci laporan

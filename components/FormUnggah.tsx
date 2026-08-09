@@ -2,7 +2,12 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { bacaHalamanPdf, GagalBacaPdf, type SebabGagalPdf } from "@/lib/bacaPdf";
+import {
+  bacaHalamanPdf,
+  GagalBacaPdf,
+  jejakPerangkat,
+  type SebabGagalPdf,
+} from "@/lib/bacaPdf";
 
 const PESAN_GAGAL: Record<SebabGagalPdf, string> = {
   terkunci:
@@ -30,6 +35,7 @@ export default function FormUnggah() {
   const [berkas, setBerkas] = useState<File | null>(null);
   const [tahap, setTahap] = useState<Tahap>({ jenis: "diam" });
   const [galat, setGalat] = useState<string | null>(null);
+  const [detail, setDetail] = useState<string | null>(null);
   const [seret, setSeret] = useState(false);
 
   const sibuk = tahap.jenis !== "diam";
@@ -51,6 +57,7 @@ export default function FormUnggah() {
   async function kirim() {
     if (!berkas || sibuk) return;
     setGalat(null);
+    setDetail(null);
 
     let halaman: string[];
     try {
@@ -63,6 +70,11 @@ export default function FormUnggah() {
       setTahap({ jenis: "diam" });
       const sebab = e instanceof GagalBacaPdf ? e.sebab : "lainnya";
       setGalat(PESAN_GAGAL[sebab]);
+      setDetail(
+        e instanceof GagalBacaPdf
+          ? e.detail
+          : `${(e as Error)?.name}: ${(e as Error)?.message} · ${jejakPerangkat()}`,
+      );
       return;
     }
 
@@ -172,7 +184,22 @@ export default function FormUnggah() {
         </div>
       )}
 
-      {galat && <p className="galat">{galat}</p>}
+      {galat && (
+        <div className="galat">
+          <p style={{ margin: 0 }}>{galat}</p>
+          {detail && (
+            <details className="detail-galat">
+              <summary>Detail teknis</summary>
+              <p>
+                Kalau mau melaporkan masalah ini, tangkapan layar bagian ini
+                sudah cukup — isinya sebab sebenarnya dan kemampuan peramban di
+                perangkat ini.
+              </p>
+              <code>{detail}</code>
+            </details>
+          )}
+        </div>
+      )}
     </div>
   );
 }

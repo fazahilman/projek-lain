@@ -215,6 +215,34 @@ h3 {
   text-align: left;
 }
 
+.detail-galat {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.detail-galat summary {
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.detail-galat p {
+  margin: 8px 0;
+  opacity: 0.85;
+}
+
+.detail-galat code {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 12px;
+  line-height: 1.5;
+  /* Jejak perangkat itu satu baris panjang tanpa spasi di beberapa bagian —
+     tanpa ini kotaknya melebar dan halaman jadi bisa digeser ke samping. */
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
 /* ---------- riwayat ---------- */
 
 .daftar-riwayat {
